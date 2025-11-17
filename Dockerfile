@@ -1,8 +1,16 @@
-FROM python:3.10
+FROM python:3.11-slim
 
 WORKDIR /app
+
 COPY requirements.txt .
-RUN pip install --upgrade pip && pip install --default-timeout=100 --no-cache-dir -r requirements.txt
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        netcat-traditional \
+        curl \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir -r requirements.txt --default-timeout=100
+
 COPY . .
-EXPOSE 8009
-CMD ["uvicorn","main:app","--host","0.0.0.0","--port","8009"]
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -6,12 +6,12 @@ services:
     container_name: todo_mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: tododb
-      MYSQL_USER: todo_user
-      MYSQL_PASSWORD: todopass
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3307:3306"
+      - "${FORWARD_DB_PORT}:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
@@ -19,11 +19,11 @@ services:
       interval: 5s
       timeout: 10s
       retries: 5
-
-  app:
+      
+  todoapp.api:
     build: .
     container_name: todo_fastapi
-    restart: always
+    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
